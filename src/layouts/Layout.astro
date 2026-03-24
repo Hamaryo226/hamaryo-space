@@ -4,12 +4,31 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  /** OGP画像の絶対URL（省略時はデフォルト画像） */
+  image?: string;
+  /** og:type。記事ページでは 'article' を渡す */
+  type?: 'website' | 'article';
+  /** 記事の公開日（ISO 8601形式）*/
+  publishedTime?: string;
 }
 
 const {
   title = 'hamaryo',
-  description = 'hamaryo のポートフォリオサイト。',
+  description = 'hamaryo のポートフォリオ。システムエンジニアとして、アクセシビリティ支援・医療福祉DX・生成AI領域でのシステム開発に取り組んでいます。',
+  image,
+  type = 'website',
+  publishedTime,
 } = Astro.props;
+
+// Canonical URL
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://hamaryo.dev');
+
+// OGP image (absolute URL)
+const ogImage = image
+  ?? new URL('/og-image.png', Astro.site ?? 'https://hamaryo.dev').toString();
+
+// Full title for <title> tag
+const fullTitle = title === 'hamaryo' ? 'hamaryo' : `${title} — hamaryo`;
 
 // Determine if we're on a blog page to adjust nav link hrefs
 const isBlogPage = Astro.url.pathname.startsWith('/blog');
@@ -21,13 +40,39 @@ const prefix = isBlogPage ? '/' : '';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary meta -->
+    <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <meta name="author" content="hamaryo" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="hamaryo" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ja_JP" />
+    {type === 'article' && publishedTime && (
+      <meta property="article:published_time" content={publishedTime} />
+    )}
+    {type === 'article' && (
+      <meta property="article:author" content="hamaryo" />
+    )}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@_hamaryo" />
+    <meta name="twitter:creator" content="@_hamaryo" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
     <!-- Prevent flash of wrong theme -->
     <script is:inline>
       (function () {

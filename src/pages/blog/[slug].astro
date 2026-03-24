@@ -15,7 +15,12 @@ function formatDate(date: Date) {
 }
 ---
 
-<Layout title={`${post.data.title} — hamaryo`} description={post.data.description}>
+<Layout
+  title={post.data.title}
+  description={post.data.description}
+  type="article"
+  publishedTime={post.data.date.toISOString()}
+>
   <article class="container blog-article">
     <div class="blog-article-header">
       <a href="/blog/" class="back-link">
