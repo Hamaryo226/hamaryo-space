@@ -1,0 +1,249 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const awardProjects = [
+  {
+    tier: 'gold',
+    badge: '優秀賞（2位）',
+    name: 'Supplemental-Documentation-System',
+    nameJa: '聴覚障碍者に向けたノートテイクシステム開発プロジェクト',
+    desc: '講義動画からノートテイクを自動生成するシステム。OCRと画像処理パイプラインを組み合わせ、動画から連番画像を抽出し、類似フレームを除去したのちテキストを抽出。実際の講義支援への応用を目指した。',
+    tags: ['Python', 'PHP', 'OCR', 'OpenCV', '画像処理', 'データパイプライン'],
+    href: 'https://open.shonan.bunkyo.ac.jp/proen/2023_pro-bc/2023_b08-%e8%81%b4%e8%a6%9a%e9%9a%9c%e7%a2%8d%e8%80%85%e3%81%ab%e5%90%91%e3%81%91%e3%81%9f%e3%83%8e%e3%83%bc%e3%83%88%e3%83%86%e3%82%a4%e3%82%af%e3%82%b7%e3%82%b9%e3%83%86%e3%83%a0%e9%96%8b%e7%99%ba',
+  },
+  {
+    tier: 'silver',
+    badge: '奨励賞（4位）',
+    name: 'Frailty Check System',
+    nameJa: '高齢者に向けたフレイルチェックシステム開発プロジェクト',
+    desc: '高齢者向けフレイルチェック教室の運営を効率化するWebシステム。音声認識（Web Speech API）を活用したデータ入力機能を実装し、高齢者でも扱いやすいUI/UX設計にこだわった。',
+    tags: ['Python', 'Django', 'JavaScript', 'Web Speech API', 'UI/UX設計'],
+    href: 'https://open.shonan.bunkyo.ac.jp/proen/2024_prode/2024_a16-%e9%ab%98%e9%bd%a2%e8%80%85%e3%81%ab%e5%90%91%e3%81%91%e3%81%9f%e3%83%95%e3%83%ac%e3%82%a4%e3%83%ab%e3%83%81%e3%82%a7%e3%83%83%e3%82%af%e3%82%b7%e3%82%b9%e3%83%86%e3%83%a0%e9%96%8b%e7%99%ba',
+  },
+];
+
+const personalProjects = [
+  {
+    name: 'OrderManager2',
+    desc: '注文管理システム。',
+    tags: ['Next.js', 'TypeScript', 'PostgreSQL', 'Vercel'],
+    href: 'https://github.com/sakurai-lab-07/OrderManager2',
+  },
+  {
+    name: 'TaikoDive',
+    desc: '太鼓の達人のようなリズムゲーム。',
+    tags: ['C#', '.NET'],
+    href: 'https://github.com/Hamaryo226/TaikoDive',
+  },
+  {
+    name: 'Drop-Watermark',
+    desc: '写真下部にXiaomi風の透かしを入れるスクリプト',
+    tags: ['Python', 'Pillow'],
+    href: 'https://github.com/Hamaryo-Space/Drop-Watermark',
+  },
+];
+
+// Latest 3 blog posts for index preview
+const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+const arrowIcon = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>`;
+
+// SVG icons for award badges (no emoji)
+const medalGold = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>`;
+const medalSilver = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>`;
+
+// SVG for section heading icons
+const trophyIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.4rem;flex-shrink:0"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`;
+const microscopeIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.4rem;flex-shrink:0"><path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/></svg>`;
+const editIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.4rem;flex-shrink:0"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+---
+
+<Layout>
+  <!-- ─── HERO ─────────────────────────────────────── -->
+  <section class="hero container" id="hero">
+    <h1 class="fade-up">hamaryo</h1>
+    <p class="fade-up" style="color: var(--text-muted); margin-bottom: 1.6rem; font-size: 0.95rem;">
+      Software Engineer
+    </p>
+    <div class="fade-up hero-links">
+      <a href="https://github.com/Hamaryo226" target="_blank" rel="noopener" class="btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        GitHub
+      </a>
+      <a href="https://twitter.com/_hamaryo" target="_blank" rel="noopener" class="btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        Twitter
+      </a>
+      <a href="#awards" class="btn primary">受賞プロジェクト →</a>
+    </div>
+  </section>
+
+  <div class="container"><hr /></div>
+
+  <!-- ─── ABOUT ────────────────────────────────────── -->
+  <section class="container" id="about">
+    <h2 class="reveal">About</h2>
+    <div class="about-text reveal">
+      <p>
+        大学で情報学を専攻。在学中は
+        <strong style="color: var(--text)">システム・デザイン</strong>
+        の領域でシステム開発に取り組み、学内で受賞を重ねました。
+      </p>
+    </div>
+
+    <div class="about-timeline reveal">
+      <div class="timeline-item">
+        <div class="timeline-year">2022</div>
+        <div class="timeline-desc">大学入学 — 情報学</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2023</div>
+        <div class="timeline-desc">聴覚障害者支援システム開発 → 学内 優秀賞</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2024</div>
+        <div class="timeline-desc">フレイルチェックシステム開発 → 学内 奨励賞</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2025 – 2026</div>
+        <div class="timeline-desc">卒業研究・学会発表</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── AWARD PROJECTS ───────────────────────────── -->
+  <section class="container" id="awards">
+    <h2 class="reveal">
+      <Fragment set:html={trophyIcon} />Award-Winning Projects
+    </h2>
+    <div class="award-list reveal">
+      {awardProjects.map(({ tier, badge, name, nameJa, desc, tags, href }) => (
+        <a class={`award-card ${tier}`} href={href} target="_blank" rel="noopener">
+          <div class="award-header">
+            <div>
+              <h3>{name}</h3>
+              <p style="font-size: 0.8rem; margin-top: 0.1rem; color: var(--text-muted);">{nameJa}</p>
+            </div>
+            <span class="award-badge">
+              <Fragment set:html={tier === 'gold' ? medalGold : medalSilver} />
+              {badge}
+            </span>
+          </div>
+          <p>{desc}</p>
+          <div class="award-tags">
+            {tags.map((t) => <span class="tag">{t}</span>)}
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ─── RESEARCH ─────────────────────────────────── -->
+  <section class="container" id="research">
+    <h2 class="reveal">
+      <Fragment set:html={microscopeIcon} />Research &amp; Publications
+    </h2>
+    <div class="research-placeholder reveal">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:0.75rem;color:var(--text-muted)">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+      </svg>
+      <p style="font-weight: 500; color: var(--text); margin-bottom: 0.4rem;">Coming Soon</p>
+      <p>学会発表・受賞研究の詳細は近日公開予定です。</p>
+    </div>
+  </section>
+
+  <!-- ─── PERSONAL PROJECTS ────────────────────────── -->
+  <section class="container" id="projects">
+    <h2 class="reveal">Personal Projects</h2>
+    <div class="projects-list reveal">
+      {personalProjects.map(({ name, desc, tags, href }) => (
+        <a class="project-row" href={href} target="_blank" rel="noopener">
+          <div>
+            <h3>{name}</h3>
+            <p>{desc}</p>
+            <div class="project-tags">
+              {tags.map((t) => <span class="tag">{t}</span>)}
+            </div>
+          </div>
+          <div class="project-arrow">
+            <Fragment set:html={arrowIcon} />
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ─── BLOG PREVIEW ─────────────────────────────── -->
+  <section class="container" id="blog">
+    <h2 class="reveal">
+      <Fragment set:html={editIcon} />Blog
+    </h2>
+    {recentPosts.length === 0 ? (
+      <p class="reveal" style="color: var(--text-muted); font-size: 0.875rem;">まだ投稿はありません。</p>
+    ) : (
+      <div class="blog-preview-list reveal">
+        {recentPosts.map((post) => (
+          <a href={`/blog/${post.id}/`} class="blog-preview-row">
+            <span class="blog-preview-title">{post.data.title}</span>
+            <time class="blog-preview-date" datetime={post.data.date.toISOString()}>
+              {formatDate(post.data.date)}
+            </time>
+          </a>
+        ))}
+      </div>
+    )}
+    <div class="reveal" style="margin-top: 1.2rem;">
+      <a href="/blog/" class="btn">すべての記事を見る →</a>
+    </div>
+  </section>
+
+  <!-- ─── CONTACT ──────────────────────────────────── -->
+  <section class="container" id="contact">
+    <h2 class="reveal">Get in Touch</h2>
+    <div class="contact-links reveal">
+      {[
+        /*
+        {
+          label: 'Email',
+          href: 'mailto:hello@hamaryo.dev',
+          detail: 'hello@hamaryo.dev',
+          icon: `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>`,
+        },
+        */
+        {
+          label: 'GitHub',
+          href: 'https://github.com/Hamaryo226',
+          detail: '@Hamaryo226',
+          icon: `<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>`,
+        },
+        {
+          label: 'Twitter / X',
+          href: 'https://twitter.com/_hamaryo',
+          detail: '@_hamaryo',
+          icon: `<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+        },
+      ].map(({ label, href, detail, icon }) => (
+        <a class="contact-link" href={href} target="_blank" rel="noopener">
+          <div class="contact-link-left">
+            <Fragment set:html={icon} />
+            <span>{label}</span>
+          </div>
+          <span class="contact-detail">{detail}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <div class="container" style="padding-bottom: 2rem;"><hr /></div>
+</Layout>

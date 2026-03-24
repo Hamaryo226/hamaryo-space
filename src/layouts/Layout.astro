@@ -1,0 +1,169 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'hamaryo',
+  description = 'hamaryo のポートフォリオサイト。',
+} = Astro.props;
+
+// Determine if we're on a blog page to adjust nav link hrefs
+const isBlogPage = Astro.url.pathname.startsWith('/blog');
+const prefix = isBlogPage ? '/' : '';
+---
+
+<!doctype html>
+<html lang="ja" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="author" content="hamaryo" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <!-- Prevent flash of wrong theme -->
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav id="nav">
+      <div class="nav-inner">
+        <a href="/" class="nav-logo">hama<span>.</span>ryo</a>
+        <div class="nav-right">
+          <ul class="nav-links" id="nav-links">
+            <li><a href={`${prefix}#about`}>About</a></li>
+            <li><a href={`${prefix}#awards`}>Awards</a></li>
+            <li><a href={`${prefix}#projects`}>Projects</a></li>
+            <li><a href="/blog/">Blog</a></li>
+            <li><a href={`${prefix}#contact`}>Contact</a></li>
+          </ul>
+          <button
+            class="theme-toggle"
+            id="theme-toggle"
+            aria-label="Toggle theme"
+            title="Toggle light/dark mode"
+          >
+            <span class="icon-sun">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+              </svg>
+            </span>
+            <span class="icon-moon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            </span>
+          </button>
+          <!-- Hamburger button (mobile only) -->
+          <button
+            class="hamburger"
+            id="hamburger"
+            aria-label="メニューを開く"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+          >
+            <span class="ham-bar"></span>
+            <span class="ham-bar"></span>
+            <span class="ham-bar"></span>
+          </button>
+        </div>
+      </div>
+      <!-- Mobile menu panel -->
+      <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+        <ul>
+          <li><a href={`${prefix}#about`}>About</a></li>
+          <li><a href={`${prefix}#awards`}>Awards</a></li>
+          <li><a href={`${prefix}#projects`}>Projects</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href={`${prefix}#contact`}>Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>© 2026 hamaryo · Built with <a href="https://astro.build" target="_blank" rel="noopener">Astro</a></p>
+      </div>
+    </footer>
+
+    <script>
+      // Nav scroll effect
+      const nav = document.getElementById('nav')!;
+      window.addEventListener('scroll', () => {
+        nav.classList.toggle('scrolled', window.scrollY > 20);
+      }, { passive: true });
+
+      // Theme toggle
+      const themeBtn = document.getElementById('theme-toggle')!;
+      themeBtn.addEventListener('click', () => {
+        const html = document.documentElement;
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+
+      // Hamburger menu
+      const hamburger = document.getElementById('hamburger')!;
+      const mobileMenu = document.getElementById('mobile-menu')!;
+
+      function toggleMenu(open?: boolean) {
+        const isOpen = open ?? !mobileMenu.classList.contains('open');
+        mobileMenu.classList.toggle('open', isOpen);
+        hamburger.classList.toggle('open', isOpen);
+        hamburger.setAttribute('aria-expanded', String(isOpen));
+        mobileMenu.setAttribute('aria-hidden', String(!isOpen));
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+      }
+
+      hamburger.addEventListener('click', () => toggleMenu());
+
+      // Close menu on link click
+      mobileMenu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => toggleMenu(false));
+      });
+
+      // Close menu on outside click
+      document.addEventListener('click', (e) => {
+        if (
+          mobileMenu.classList.contains('open') &&
+          !nav.contains(e.target as Node)
+        ) {
+          toggleMenu(false);
+        }
+      });
+
+      // Scroll-triggered reveal
+      const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              (entry.target as HTMLElement).classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.08 }
+      );
+      reveals.forEach((el) => observer.observe(el));
+    </script>
+  </body>
+</html>

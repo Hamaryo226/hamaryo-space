@@ -1,0 +1,43 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+---
+
+<Layout title={`${post.data.title} — hamaryo`} description={post.data.description}>
+  <article class="container blog-article">
+    <div class="blog-article-header">
+      <a href="/blog/" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Blog
+      </a>
+      <time class="blog-post-date" datetime={post.data.date.toISOString()}>
+        {formatDate(post.data.date)}
+      </time>
+      <h1>{post.data.title}</h1>
+      <p class="blog-article-desc">{post.data.description}</p>
+      {post.data.tags.length > 0 && (
+        <div class="blog-post-tags" style="margin-top: 0.75rem;">
+          {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+      )}
+    </div>
+    <hr style="margin: 2rem 0;" />
+    <div class="blog-content">
+      <Content />
+    </div>
+  </article>
+</Layout>
