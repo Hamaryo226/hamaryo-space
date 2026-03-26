@@ -80,6 +80,11 @@ const prefix = isBlogPage ? '/' : '';
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const theme = stored || (prefersDark ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', theme);
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
       })();
     </script>
   </head>
@@ -162,6 +167,11 @@ const prefix = isBlogPage ? '/' : '';
         const html = document.documentElement;
         const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         html.setAttribute('data-theme', next);
+        if (next === 'dark') {
+          html.classList.add('dark');
+        } else {
+          html.classList.remove('dark');
+        }
         localStorage.setItem('theme', next);
       });
 

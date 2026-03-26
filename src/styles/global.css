@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ─── Fonts ─────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -802,20 +806,63 @@ h2 { display: flex; align-items: center; }
 [data-theme="light"] .callout-tip .callout-header { color: #276749; }
 
 /* ─── Share Buttons ──────────────────────────────────── */
-.share-container {
-  margin-top: 3rem;
-  padding-top: 1.5rem;
-  border-top: 1px dashed var(--border);
+.share-wrapper {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.share-main-btn {
+  font-weight: 400;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.82rem;
+  background: transparent;
+  color: var(--text-muted);
+  border-color: transparent;
+}
+.share-main-btn:hover {
+  color: var(--text);
+  border-color: var(--border);
+  background: var(--bg-subtle);
+}
+.share-main-btn[aria-expanded="true"] {
+  border-color: var(--border);
+  color: var(--text);
+  background: var(--bg-subtle);
 }
 .share-list {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
   list-style: none;
   flex-wrap: wrap;
+  
+  /* Initial hidden state */
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  
+  /* Collapse height so it doesn't take space */
+  height: 0;
+  overflow: hidden;
+  margin-top: -0.2rem;
+}
+.share-list.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  visibility: visible;
+  height: auto;
+  margin-top: 0;
+  overflow: visible;
 }
 .share-btn {
-  font-weight: 500;
-  padding: 0.55rem 1.1rem;
+  font-weight: 400;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
 }
 .share-btn-x:hover {
   background: var(--bg-subtle);
