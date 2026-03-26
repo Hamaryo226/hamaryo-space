@@ -800,3 +800,30 @@ h2 { display: flex; align-items: center; }
 .callout-tip .callout-header { color: #68d391; }
 [data-theme="light"] .callout-tip { background: rgba(39, 103, 73, 0.06); border-color: rgba(39, 103, 73, 0.3); }
 [data-theme="light"] .callout-tip .callout-header { color: #276749; }
+
+/* ─── Share Buttons ──────────────────────────────────── */
+.share-container {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed var(--border);
+}
+.share-list {
+  display: flex;
+  gap: 0.75rem;
+  list-style: none;
+  flex-wrap: wrap;
+}
+.share-btn {
+  font-weight: 500;
+  padding: 0.55rem 1.1rem;
+}
+.share-btn-x:hover {
+  background: var(--bg-subtle);
+  color: var(--text);
+  border-color: var(--text);
+}
+.share-btn-ig:hover {
+  background: var(--bg-subtle);
+  color: #e1306c;
+  border-color: #e1306c;
+}

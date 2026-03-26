@@ -1,0 +1,233 @@
+---
+interface Props {
+  title: string;
+  date: Date;
+  description: string;
+  url: string;
+}
+
+const { title, date, description, url } = Astro.props;
+
+function formatDate(d: Date) {
+  return d.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+const formattedDate = formatDate(date);
+const xShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title + ' - hamaryo')}&url=${encodeURIComponent(url)}`;
+---
+
+<div class="share-container">
+  <ul class="share-list">
+    <li>
+      <a href={xShareUrl} target="_blank" rel="noopener noreferrer" class="btn share-btn share-btn-x">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 24.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        X にポスト
+      </a>
+    </li>
+    <li>
+      <button 
+        type="button" 
+        class="btn share-btn share-btn-ig" 
+        id="ig-share-btn"
+        data-title={title}
+        data-date={formattedDate}
+        data-desc={description}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+        Instagram に共有
+      </button>
+    </li>
+  </ul>
+</div>
+
+<script>
+  const igBtn = document.getElementById('ig-share-btn');
+
+  if (igBtn) {
+    igBtn.addEventListener('click', async () => {
+      const title = igBtn.getAttribute('data-title') || '';
+      const dateStr = igBtn.getAttribute('data-date') || '';
+      const desc = igBtn.getAttribute('data-desc') || '';
+      
+      const originalText = igBtn.innerHTML;
+      igBtn.innerHTML = '画像生成中...';
+      igBtn.setAttribute('disabled', 'true');
+
+      try {
+        const file = await generateShareImage(title, dateStr, desc);
+        
+        if (navigator.share) {
+          await navigator.share({
+            files: [file],
+            title: title
+          });
+        } else {
+          alert('お使いのブラウザは Web Share API による画像共有に対応していません。');
+        }
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          console.error('Share error:', err);
+          alert('共有に失敗しました。');
+        }
+      } finally {
+        igBtn.innerHTML = originalText;
+        igBtn.removeAttribute('disabled');
+      }
+    });
+  }
+
+  function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+    const lines = [];
+    let currentLine = '';
+    
+    // Simple character-based wrapping for Japanese
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const testLine = currentLine + char;
+      const metrics = ctx.measureText(testLine);
+      
+      if (metrics.width > maxWidth && i > 0) {
+        lines.push(currentLine);
+        currentLine = char;
+      } else {
+        currentLine = testLine;
+      }
+    }
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+    return lines;
+  }
+
+  async function generateShareImage(title: string, dateStr: string, desc: string): Promise<File> {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1920;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas context not found');
+
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    
+    const bg = isDark ? '#0a0a0a' : '#fafafa';
+    const text = isDark ? '#e8e8e8' : '#111111';
+    const textMuted = isDark ? '#888888' : '#555555';
+    const accent = isDark ? '#a78bfa' : '#7c3aed';
+    const border = isDark ? '#1f1f1f' : '#e2e2e2';
+
+    // Background
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Accent Line
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+    gradient.addColorStop(0, accent);
+    gradient.addColorStop(1, isDark ? '#c4b5fd' : '#6d28d9');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, 32);
+
+    const padding = 120;
+    const contentWidth = canvas.width - padding * 2;
+    
+    // Logo
+    ctx.font = '500 52px "JetBrains Mono", monospace';
+    ctx.fillStyle = text;
+    ctx.fillText('hama', padding, 220);
+    const hamaWidth = ctx.measureText('hama').width;
+    ctx.fillStyle = accent;
+    ctx.fillText('.', padding + hamaWidth, 220);
+    const dotWidth = ctx.measureText('.').width;
+    ctx.fillStyle = text;
+    ctx.fillText('ryo', padding + hamaWidth + dotWidth, 220);
+    
+    // Badge
+    const badgeY = 320;
+    ctx.fillStyle = isDark ? 'rgba(167,139,250,0.12)' : 'rgba(124,58,237,0.08)';
+    ctx.beginPath();
+    ctx.roundRect(padding, badgeY, 190, 60, 30);
+    ctx.fill();
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    ctx.fillStyle = accent;
+    ctx.font = '600 24px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('NEW POST', padding + 95, badgeY + 30);
+
+    // Date
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = textMuted;
+    ctx.font = '400 34px "JetBrains Mono", monospace';
+    ctx.fillText(dateStr, padding, badgeY + 160);
+
+    // Title
+    ctx.fillStyle = text;
+    ctx.font = '600 76px "Inter", sans-serif';
+    const titleLines = wrapText(ctx, title, contentWidth);
+    let currentY = badgeY + 300;
+    const titleLineHeight = 110;
+    
+    for (const line of titleLines) {
+      if (currentY > 1200) {
+        ctx.fillText('...', padding, currentY);
+        currentY += titleLineHeight;
+        break;
+      }
+      ctx.fillText(line, padding, currentY);
+      currentY += titleLineHeight;
+    }
+
+    // Divider
+    currentY += 40;
+    ctx.fillStyle = border;
+    ctx.fillRect(padding, currentY, contentWidth, 2);
+
+    // Author Summary Label (本人要約)
+    currentY += 100;
+    ctx.fillStyle = accent; // Use accent color for the label
+    ctx.font = '600 36px "Inter", sans-serif';
+    ctx.fillText('本人要約', padding, currentY);
+
+    // Description
+    currentY += 70;
+    ctx.fillStyle = textMuted;
+    ctx.font = '400 38px "Inter", sans-serif';
+    const descLines = wrapText(ctx, desc, contentWidth);
+    const descLineHeight = 65;
+    
+    for (let i = 0; i < descLines.length; i++) {
+      if (i === 6) break;
+      let lineText = descLines[i];
+      if (i === 5 && descLines.length > 6) {
+        lineText = lineText.replace(/...$/, '...');
+      }
+      ctx.fillText(lineText, padding, currentY);
+      currentY += descLineHeight;
+    }
+
+    const domain = window.location.hostname || 'hamaryo.dev';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = textMuted;
+    ctx.font = '400 38px "JetBrains Mono", monospace';
+    ctx.fillText(`Read more on ${domain}/blog`, canvas.width / 2, canvas.height - 120);
+
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], 'share-story.png', { type: 'image/png' });
+          resolve(file);
+        } else {
+          reject(new Error('Failed to create blob'));
+        }
+      }, 'image/png');
+    });
+  }
+</script>

@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import ShareButtons from '../../components/ShareButtons.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -13,6 +14,16 @@ const { Content } = await render(post);
 function formatDate(date: Date) {
   return date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
 }
+
+let authorSummary = post.data.description;
+if (post.body) {
+  const match = post.body.match(/<Callout[^>]*title="本人が?要約"[^>]*>([\s\S]*?)<\/Callout>/);
+  if (match && match[1]) {
+    authorSummary = match[1].trim();
+  }
+}
+
+const absoluteUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://hamaryo.dev').toString();
 ---
 
 <Layout
@@ -39,6 +50,12 @@ function formatDate(date: Date) {
           {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
         </div>
       )}
+      <ShareButtons 
+        title={post.data.title} 
+        date={post.data.date} 
+        description={authorSummary} 
+        url={absoluteUrl} 
+      />
     </div>
     <hr style="margin: 2rem 0;" />
     <div class="blog-content">
