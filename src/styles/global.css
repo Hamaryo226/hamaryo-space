@@ -717,57 +717,104 @@ h2 { display: flex; align-items: center; }
 .blog-article-header .back-link { margin-bottom: 0; }
 .blog-article-header .blog-post-date { margin: 0; }
 .blog-article-header h1 {
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  margin: 0.25rem 0 0.25rem;
-  line-height: 1.3;
+  font-size: clamp(1.72rem, 3.2vw, 2.24rem);
+  margin: 0.3rem 0 0.35rem;
+  line-height: 1.28;
+  letter-spacing: -0.01em;
 }
-.blog-article-desc { color: var(--text-muted); font-size: 0.9rem; }
+.blog-article-desc {
+  color: var(--text-muted);
+  font-size: 0.98rem;
+  line-height: 1.82;
+}
+.blog-meta-footer {
+  width: 100%;
+  margin-top: 0.65rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem 1rem;
+}
+.blog-article-tags {
+  margin-top: 0;
+  align-items: center;
+  gap: 0.45rem;
+}
+.blog-article-badge {
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
 
 /* Prose styles for blog content */
 .blog-content {
-  font-size: 0.975rem;
-  line-height: 1.8;
+  max-width: 760px;
+  font-size: 1.05rem;
+  line-height: 1.92;
+  color: var(--text-muted);
+}
+.blog-content > :first-child { margin-top: 0; }
+.blog-content > :last-child { margin-bottom: 0; }
+.blog-content h1,
+.blog-content h2,
+.blog-content h3,
+.blog-content h4 {
+  color: var(--text);
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 .blog-content h2 {
-  font-size: 1.1rem;
-  color: var(--text);
-  margin: 2rem 0 0.75rem;
+  font-size: 1.34rem;
+  margin: 2.3rem 0 0.95rem;
   padding-top: 0;
   display: block;
   text-transform: none;
-  letter-spacing: normal;
 }
 .blog-content h3 {
-  font-size: 1rem;
-  margin: 1.5rem 0 0.5rem;
+  font-size: 1.16rem;
+  margin: 1.8rem 0 0.72rem;
 }
-.blog-content p { color: var(--text-muted); margin-bottom: 1rem; }
+.blog-content p {
+  color: inherit;
+  margin: 0;
+}
+.blog-content p + p { margin-top: 1rem; }
 .blog-content ul, .blog-content ol {
-  color: var(--text-muted);
+  color: inherit;
   padding-left: 1.5rem;
-  margin-bottom: 1rem;
+  margin: 0.8rem 0 1.1rem;
 }
-.blog-content li { margin-bottom: 0.3rem; }
+.blog-content li { margin-bottom: 0.45rem; }
+.blog-content li::marker { color: var(--text-muted); }
 .blog-content a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 .blog-content a:hover { color: var(--accent-hover); }
 .blog-content strong { color: var(--text); font-weight: 600; }
+.blog-content :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.84em;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.13em 0.38em;
+}
 .blog-content blockquote {
-  border-left: 3px solid var(--accent);
-  padding: 0.5rem 1rem;
-  margin: 1rem 0;
-  color: var(--text-muted);
-  font-style: italic;
+  border-left: 3px solid var(--text);
+  padding: 0.8rem 1.05rem;
+  margin: 1.2rem 0;
+  color: inherit;
+  font-style: normal;
   background: var(--accent-dim);
   border-radius: 0 6px 6px 0;
 }
 .blog-content pre {
   background: var(--bg-subtle);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1rem 1.2rem;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
   overflow-x: auto;
-  margin: 1rem 0;
-  font-size: 0.85rem;
+  margin: 1.2rem 0;
+  font-size: 0.84rem;
+  line-height: 1.7;
 }
 .blog-content code {
   font-family: var(--font-mono);
@@ -777,6 +824,30 @@ h2 { display: flex; align-items: center; }
   border: none;
   padding: 0;
 }
+.blog-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin: 1.25rem 0;
+}
+.blog-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2rem 0;
+  font-size: 0.92rem;
+}
+.blog-content th,
+.blog-content td {
+  border: 1px solid var(--border);
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+}
+.blog-content th {
+  color: var(--text);
+  background: var(--bg-subtle);
+  font-weight: 600;
+}
 .blog-content hr {
   margin: 2rem 0;
 }
@@ -784,6 +855,27 @@ h2 { display: flex; align-items: center; }
 @media (max-width: 600px) {
   .blog-post-row { flex-direction: column; gap: 0.4rem; }
   .blog-preview-row { flex-direction: column; gap: 0.2rem; align-items: flex-start; }
+  .blog-meta-footer {
+    align-items: flex-start;
+    gap: 0.7rem;
+  }
+  .blog-article-header h1 {
+    font-size: clamp(1.5rem, 8vw, 1.9rem);
+  }
+  .blog-article-desc {
+    font-size: 0.93rem;
+  }
+  .blog-content {
+    font-size: 0.99rem;
+    line-height: 1.88;
+  }
+  .blog-content h2 {
+    font-size: 1.19rem;
+    margin-top: 2rem;
+  }
+  .blog-content h3 {
+    font-size: 1.06rem;
+  }
 }
 
 /* ─── Callout components (MDX) ───────────────────────── */

@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import ShareButtons from '../../components/ShareButtons.tsx';
+import Badge from '../../components/starwind/Badge.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -45,10 +46,12 @@ const absoluteUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://hamaryo.d
       </time>
       <h1>{post.data.title}</h1>
       <p class="blog-article-desc">{post.data.description}</p>
-      <div class="blog-meta-footer" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 0.5rem;">
+      <div class="blog-meta-footer">
         {post.data.tags.length > 0 && (
-          <div class="blog-post-tags" style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; margin: 0;">
-            {post.data.tags.map((tag) => <span class="tag" style="line-height: normal;">{tag}</span>)}
+          <div class="blog-post-tags blog-article-tags">
+            {post.data.tags.map((tag) => (
+              <Badge variant="outline" class="blog-article-badge">{tag}</Badge>
+            ))}
           </div>
         )}
         <ShareButtons 

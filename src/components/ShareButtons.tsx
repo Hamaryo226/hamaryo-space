@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from './starwind/button';
+import { ButtonGroup } from './starwind/button-group';
 
 interface ShareButtonsProps {
   title: string;
@@ -182,15 +183,28 @@ export default function ShareButtons({ title, date, description, url }: ShareBut
   };
 
   return (
-    <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
-      <div className="flex flex-wrap items-center gap-2">
-        <Button type="button" variant="outline" size="sm" onClick={handleXShare}>
+    <div className="flex items-center">
+      <ButtonGroup className="shadow-sm">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="rounded-none border-0 border-r border-[var(--border)] px-3.5 text-[12px]"
+          onClick={handleXShare}
+        >
           X にポスト
         </Button>
-        <Button type="button" variant="outline" size="sm" onClick={handleIgShare} disabled={isGenerating}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="rounded-none border-0 px-3.5 text-[12px]"
+          onClick={handleIgShare}
+          disabled={isGenerating}
+        >
           {isGenerating ? '画像生成中...' : '共有'}
         </Button>
-      </div>
+      </ButtonGroup>
     </div>
   );
 }

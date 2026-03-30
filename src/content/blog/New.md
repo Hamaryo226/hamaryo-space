@@ -6,12 +6,6 @@ tags: ["Astro", "ポートフォリオ", "ブログ"]
 draft: false
 ---
 
-import Callout from '../../components/Callout.astro';
-
-<Callout type="info" title="本人が要約">
-  Astroで作り直したよ。これからもよろしくね❣
-</Callout>
-
 ## はじめに
 
 ポートフォリオサイトをリニューアルしました。  
