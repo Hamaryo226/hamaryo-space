@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@heroui/react";
+import { Button } from './starwind/button';
 
 interface ShareButtonsProps {
   title: string;
@@ -51,19 +51,16 @@ export default function ShareButtons({ title, date, description, url }: ShareBut
 
     const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
     
-    const bg = isDark ? '#0a0a0a' : '#fafafa';
-    const text = isDark ? '#e8e8e8' : '#111111';
-    const textMuted = isDark ? '#888888' : '#555555';
-    const accent = isDark ? '#a78bfa' : '#7c3aed';
-    const border = isDark ? '#1f1f1f' : '#e2e2e2';
+    const bg = isDark ? '#0f0f10' : '#ffffff';
+    const text = isDark ? '#f4f4f5' : '#111111';
+    const textMuted = isDark ? '#a1a1aa' : '#616161';
+    const accent = isDark ? '#ffffff' : '#111111';
+    const border = isDark ? '#2a2a2d' : '#e3e3e3';
 
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-    gradient.addColorStop(0, accent);
-    gradient.addColorStop(1, isDark ? '#c4b5fd' : '#6d28d9');
-    ctx.fillStyle = gradient;
+    ctx.fillStyle = border;
     ctx.fillRect(0, 0, canvas.width, 32);
 
     const padding = 120;
@@ -80,7 +77,7 @@ export default function ShareButtons({ title, date, description, url }: ShareBut
     ctx.fillText('ryo', padding + hamaWidth + dotWidth, 220);
     
     const badgeY = 320;
-    ctx.fillStyle = isDark ? 'rgba(167,139,250,0.12)' : 'rgba(124,58,237,0.08)';
+    ctx.fillStyle = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(17,17,17,0.06)';
     ctx.beginPath();
     ctx.roundRect(padding, badgeY, 190, 60, 30);
     ctx.fill();
@@ -101,7 +98,7 @@ export default function ShareButtons({ title, date, description, url }: ShareBut
     ctx.fillText(formattedDate, padding, badgeY + 160);
 
     ctx.fillStyle = text;
-    ctx.font = '600 76px "Inter", sans-serif';
+    ctx.font = '700 76px "Manrope", sans-serif';
     const titleLines = wrapText(ctx, title, contentWidth);
     let currentY = badgeY + 300;
     const titleLineHeight = 110;
@@ -122,12 +119,12 @@ export default function ShareButtons({ title, date, description, url }: ShareBut
 
     currentY += 100;
     ctx.fillStyle = accent;
-    ctx.font = '600 36px "Inter", sans-serif';
+    ctx.font = '700 36px "Manrope", sans-serif';
     ctx.fillText('本人要約', padding, currentY);
 
     currentY += 70;
     ctx.fillStyle = textMuted;
-    ctx.font = '400 38px "Inter", sans-serif';
+    ctx.font = '500 38px "Manrope", sans-serif';
     const descLines = wrapText(ctx, description, contentWidth);
     const descLineHeight = 65;
     
@@ -171,7 +168,7 @@ export default function ShareButtons({ title, date, description, url }: ShareBut
         alert('お使いのブラウザは Web Share API による画像共有に対応していません。');
       }
     } catch (err: any) {
-      if (err.name !== 'AbortError') {
+      if (!(err instanceof Error) || err.name !== 'AbortError') {
         console.error('Share error:', err);
         alert('共有に失敗しました。');
       }
@@ -180,53 +177,20 @@ export default function ShareButtons({ title, date, description, url }: ShareBut
     }
   };
 
+  const handleXShare = () => {
+    window.open(xShareUrl, '_blank', 'noopener,noreferrer');
+  };
+
   return (
-    <div className="flex items-center">
-      <Dropdown shouldBlockScroll={false}>
-        <DropdownTrigger>
-          <Button 
-            size="sm"
-            className="text-default-600 font-medium px-3 bg-transparent hover:bg-default-100"
-          >
-            <div className="flex items-center gap-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="18" cy="5" r="3"></circle>
-                <circle cx="6" cy="12" r="3"></circle>
-                <circle cx="18" cy="19" r="3"></circle>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-              </svg>
-              この記事をシェア
-            </div>
-          </Button>
-        </DropdownTrigger>
-        <DropdownMenu aria-label="Share Options" onAction={(key) => {
-          if (key === 'ig') {
-            handleIgShare();
-          } else if (key === 'twitter') {
-            window.open(xShareUrl, '_blank', 'noopener,noreferrer');
-          }
-        }}>
-          <DropdownItem key="twitter" textValue="X にポスト">
-            <div className="flex items-center gap-2">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 24.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-              </svg>
-              X にポスト
-            </div>
-          </DropdownItem>
-          <DropdownItem key="ig" textValue="Instagram に共有" className="text-pink-500 hover:text-pink-600">
-            <div className="flex items-center gap-2">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-              </svg>
-              {isGenerating ? "画像生成中..." : "Instagram に共有"}
-            </div>
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
+    <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button type="button" variant="outline" size="sm" onClick={handleXShare}>
+          X にポスト
+        </Button>
+        <Button type="button" variant="outline" size="sm" onClick={handleIgShare} disabled={isGenerating}>
+          {isGenerating ? '画像生成中...' : '共有'}
+        </Button>
+      </div>
     </div>
   );
 }
